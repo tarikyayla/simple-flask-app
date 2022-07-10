@@ -20,6 +20,11 @@
 docker-compose up -d # should run db with seed data and services.
 ```
 
+### Note: To solve /init-db.sh: /bin/bash^M: bad interpreter: No such file or directory 
+```
+sed -i -e 's/\r$//' init-db.sh
+```
+
 # API
 
 ```json
