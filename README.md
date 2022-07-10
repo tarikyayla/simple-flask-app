@@ -1,6 +1,20 @@
 # Installation
 
 ## _This is a development version. Both client and api runs in different ports. To have a release, you have to add an endpoint renders client build._
+<br>
+
+## Server runs on localhost:5000
+
+
+## Client runs on localhost:3000 
+<br> 
+
+![ui](https://user-images.githubusercontent.com/29834197/178162305-5c8d2202-54b7-43e6-9bc3-547f60ada057.jpg)
+
+![image](https://user-images.githubusercontent.com/29834197/178162344-5eb18d39-5502-4273-9024-62e42ede2c6a.png )
+
+
+<br>
 
 ```
 docker-compose up -d # should run db with seed data and services.

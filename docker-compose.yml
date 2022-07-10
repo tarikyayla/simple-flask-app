@@ -24,3 +24,15 @@ services:
       - ./api:/app
     depends_on:
       - postgres
+  client: 
+    build:
+      context: ./client
+    container_name: port-list-client
+    ports: 
+      - "3000:3000"
+    environment: 
+      - REACT_APP_BACKEND_URL=http://localhost:5000/api
+    volumes: 
+      - ./client:/app
+    depends_on: 
+      - server
