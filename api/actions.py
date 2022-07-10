@@ -1,7 +1,5 @@
-import code
 from flask import Blueprint, jsonify, request
-import werkzeug
-from models import Locations 
+from models import Locations, Switches, Ports 
 from playhouse.shortcuts import model_to_dict
 from flask_cors import CORS
 
@@ -21,7 +19,7 @@ def invalid_query_param_handler(e):
 
 
 class QueryParams(object):
-  page = 0
+  page = 1
   items_per_page = 20
   
   def __init__(self, page, items_per_page):
@@ -30,7 +28,7 @@ class QueryParams(object):
 
   @staticmethod 
   def is_valid_int(value):
-    """ too lazy to implement something proper, should work"""
+    """ too lazy to implement something proper, should work. Might be better to have a validator decorator"""
     try:
       value = int(value)
       if not isinstance(value, int) or value < 0: raise Exception
@@ -67,3 +65,37 @@ def get_location(id: int):
   if location is None:
     return {"ex": f"Location with id {id} not found"}, 404
   return model_to_dict(location)
+
+@api.route("/locations/<id>/switches")
+def get_switches(id: int):
+  QueryParams.is_valid_int(id)
+  params = QueryParams.get_from_args(request.args);
+  location = Locations.get_or_none(Locations.id == id) 
+  if(location is None):
+    return {"ex": f"Switch with id {id} not found"}, 404
+
+  data = Switches.select().where(Switches.location_id == id).paginate(params.page, params.items_per_page).dicts()
+  return jsonify(list(data)) 
+
+@api.route("/switches/<id>")
+def get_switch(id: int): 
+  QueryParams.is_valid_int(id)
+
+  switch = Switches.get_or_none(Switches.id == id) 
+
+  if switch is None:
+    return {"ex": f"Switch with id {id} not found"}, 404
+  return model_to_dict(switch)
+
+
+@api.route("/switches/<id>/ports")
+def get_ports(id: int):
+  QueryParams.is_valid_int(id)
+  switch = Switches.get_or_none(Switches.id == id) 
+  params = QueryParams.get_from_args(request.args);
+
+  if(switch is None):
+    return {"ex": f"Switch with id {id} not found"}, 404
+
+  ports = Ports.select().where(Ports.switch_id == id).paginate(params.page, params.items_per_page).dicts()
+  return jsonify(list(ports))
